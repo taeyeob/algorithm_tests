@@ -1,12 +1,12 @@
 # 1260
 from collections import deque # bfs
 
-n, m, v = map(int, input().split())
+n, m, v = map(int, sys.stdin.readline().split())
 
 graph = [[] for _ in range(n + 1)]
 
 for i in range(m):
-    a, b = map(int, input().split())
+    a, b = map(int, sys.stdin.readline().split())
     graph[a].append(b)
     graph[b].append(a)
     graph[a].sort()
@@ -39,12 +39,12 @@ print()
 Bfs(graph, v, visited)
 
 # 2606
-computers = int(input())
-connections = int(input())
+computers = int(sys.stdin.readline())
+connections = int(sys.stdin.readline())
 graph = [[] for _ in range(computers + 1)]
 
 for i in range(connections):
-    a, b = map(int, input().split())
+    a, b = map(int, sys.stdin.readline().split())
     graph[a].append(b)
     graph[b].append(a)
     graph[a].sort()
@@ -64,10 +64,10 @@ print(visited.count(True) - 1)
 # 2667
 from collections import deque
 
-n = int(input())
+n = int(sys.stdin.readline())
 graph = []
 for _ in range(n):
-    graph.append(list(map(int, input())))
+    graph.append(list(map(int, sys.stdin.readline())))
 
 grp = []
 cnt = 0
@@ -99,7 +99,7 @@ for i in grp:
 
 # 1012
 from collections import deque
-T = int(input())
+T = int(sys.stdin.readline())
 
 dx = [0, 0, 1, -1] # 입력방향, 좌표값인 (a, b)는 리스트에서 list[b][a]이기 때문
 dy = [1, -1, 0, 0]
@@ -123,11 +123,11 @@ def bfs(graph, a, b):
 
 for i in range(T):
     cnt = 0
-    n, m, k = map(int, input().split())
+    n, m, k = map(int, sys.stdin.readline().split())
     graph = [[0] * m for _ in range(n)]
 
     for j in range(k):
-        x, y = map(int, input().split())
+        x, y = map(int, sys.stdin.readline().split())
         graph[x][y] = 1
 
     for a in range(n):
@@ -141,10 +141,10 @@ for i in range(T):
 # 2178
 from collections import deque
 
-n, m = map(int, input().split())
+n, m = map(int, sys.stdin.readline().split())
 graph = []
 for _ in range(n):
-    graph.append(list(map(int, input())))
+    graph.append(list(map(int, sys.stdin.readline())))
 
 def bfs(a, b):
     dx = [1, -1, 0, 0]
@@ -172,11 +172,11 @@ print(bfs(0, 0))
 # 7576
 from collections import deque
 
-m, n = map(int, input().split())
+m, n = map(int, sys.stdin.readline().split())
 graph = []
 que = deque([])
 for i in range(n):
-    graph.append(list(map(int, input().split())))
+    graph.append(list(map(int, sys.stdin.readline().split())))
     for j in range(m):
         if graph[i][j] == 1:
             que.append([i, j])
@@ -222,8 +222,118 @@ def bfs():
                 dist[j] = dist[x] + 1
                 que.append(j)
 
-n, k = map(int, input().split())
+n, k = map(int, sys.stdin.readline().split())
 max = 100000
 dist = [0] * (max + 1)
 
 bfs()
+
+# 7569
+import sys
+from collections import deque
+
+m, n, h = map(int, sys.stdin.readline().split())
+graph = []
+que = deque([])
+
+for i in range(h):
+    tmp = []
+    for j in range(n):
+        tmp.append(list(map(int, sys.stdin.readline().split()))) # sys.stdin.readline() 쓰면 런타임에러
+        for k in range(m):
+            if tmp[j][k] == 1:
+                que.append([i,j,k])
+    graph.append(tmp)
+
+dx = [-1, 1, 0, 0, 0, 0]
+dy = [0, 0, -1, 1, 0, 0]
+dz = [0, 0, 0, 0, -1, 1]
+
+while que:
+    x,y,z = que.popleft()
+    for i in range(6):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        nz = z + dz[i]
+        if 0<=nx<h and 0<=ny<n and 0<=nz<m and graph[nx][ny][nz] == 0:
+            que.append([nx, ny, nz])
+            graph[nx][ny][nz] = graph[x][y][z] + 1
+
+answer = 0
+for i in graph:
+    for j in i:
+        for k in j:
+            if k == 0:
+                print(-1)
+                exit(0)
+        answer = max(answer, max(j))
+
+print(answer - 1)
+
+# 2206
+import sys
+from collections import deque
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+
+def bfs():
+    que = deque()
+    que.append([0, 0, 1])
+    visit = [[[0] * 2 for _ in range(m)] for _ in range(n)]
+    visit[0][0][1] = 1 # 벽을 한번 부술 수 있는 상태에서 시작
+
+    while que:
+        x, y, z = que.popleft()
+        if x==n-1 and y==m-1:
+            return visit[x][y][z]
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            if 0 <= nx < n and 0 <= ny < m:
+                if graph[nx][ny] == 1 and z == 1: # 벽을 만났고 벽을 한번 부술 수 있을 때
+                    visit[nx][ny][0] = visit[x][y][z] + 1
+                    que.append([nx, ny, 0])
+                elif graph[nx][ny] == 0 and visit[nx][ny][z] == 0: # 벽이 없고 방문한 적이 없는 경우
+                    visit[nx][ny][z] == visit[x][y][z] + 1
+                    que.append([nx, ny, z])
+    return -1
+
+n,m = map(int, sys.stdin.readline().split())
+graph = []
+for _ in range(n):
+    graph.append(list(map(int, sys.stdin.readline().strip())))
+
+print(bfs())
+
+# 7562
+from collections import deque
+import sys
+
+T = int(sys.stdin.readline())
+for i in range(T):
+    l = int(sys.stdin.readline())
+    a,b = map(int, sys.stdin.readline().split())
+    c,d = map(int, sys.stdin.readline().split())
+    graph = [[0] * l for i in range(l)]
+
+    dx = [2, 2, -2, -2, 1, 1, -1, -1]
+    dy = [1, -1, 1, -1, 2, -2, 2, -2]
+
+    def bfs(a, b, c, d):
+        que = deque()
+        que.append([a, b])
+        graph[a][b] = 1
+        while que:
+            x, y = que.popleft()
+            if x == c and y == d:
+                print(graph[c][d]-1)
+                return
+            for i in range(8):
+                nx = x + dx[i]
+                ny = y + dy[i]
+                if 0 <= nx < l and 0 <= ny < l and graph[nx][ny] == 0:
+                    que.append([nx, ny])
+                    graph[nx][ny] = graph[x][y] + 1
+
+    bfs(a, b, c, d)
